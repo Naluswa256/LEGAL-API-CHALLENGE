@@ -1,0 +1,76 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  fullName     String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(LAWYER)
+  cases        Case[]
+  timeEntries  TimeEntry[]
+  documents    Document[]
+  createdAt    DateTime   @default(now())
+
+  @@map("users")
+}
+
+model Case {
+  id          String     @id @default(uuid())
+  lawyer      User       @relation(fields: [lawyerId], references: [id])
+  lawyerId    String
+  clientName  String
+  clientEmail String
+  status      CaseStatus @default(OPEN)
+  timeEntries TimeEntry[]
+  documents   Document[]
+  createdAt   DateTime   @default(now())
+
+  @@map("cases")
+}
+
+model TimeEntry {
+  id          String   @id @default(uuid())
+  case        Case     @relation(fields: [caseId], references: [id])
+  caseId      String
+  lawyer      User     @relation(fields: [lawyerId], references: [id])
+  lawyerId    String
+  hours       Float
+  description String
+  createdAt   DateTime @default(now())
+
+  @@map("time_entries")
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  case      Case     @relation(fields: [caseId], references: [id])
+  caseId    String
+  lawyer    User     @relation(fields: [lawyerId], references: [id])
+  lawyerId  String
+  fileName  String
+  fileUrl   String
+  createdAt DateTime @default(now())
+
+  @@map("documents")
+}
+
+enum Role {
+  ADMIN
+  LAWYER
+}
+
+export enum CaseStatus {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED',
+  IN_REVIEW = 'IN_REVIEW',
+  PENDING = 'PENDING',
+}
