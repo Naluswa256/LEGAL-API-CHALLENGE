@@ -49,9 +49,6 @@ This document provides a comprehensive overview of the API endpoints, code struc
 | GET    | `/api/v1/public/documents/:id` | Download/view a document (inline content-disposition)                      | ADMIN, LAWYER       | 200 OK, 404 Not Found      |
 
 
-
-
-
 ### Document Upload
 **Request:**
 ```http
@@ -63,23 +60,85 @@ Content-Type: multipart/form-data
 ```
 
 
+
+
 ---
+
+# API Test Credentials
+
+The following test accounts are pre-seeded in the system for development and testing purposes:
+
+## Admin Account
+- **Email**: `admin@legaltech.com`  
+- **Password**: `admin123`  
+- **Role**: `ADMIN`  
+- **User ID**: `9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d`
+
+## Attorney Account
+- **Email**: `attorney@legaltech.com`  
+- **Password**: `attorney123`  
+- **Role**: `LAWYER`  
+- **User ID**: `ef2e401d-5ecb-46be-9571-87c8256600bf`
+
+## Usage Instructions
+
+### 1. **Obtain JWT Token**
+
+To obtain a JWT token, make a POST request to the authentication endpoint:
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@legaltech.com",
+  "password": "admin123"
+}
 ```
+
+### 2. **Use JWT Token in API Requests**
+
+Once you have obtained the JWT token, you can use it in the `Authorization` header for subsequent API requests. For example, to fetch cases:
+
+```http
+GET /api/v1/cases
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
 
 ## Getting Started
 
-1. npm install
+Follow these steps to get the application up and running on your local machine:
+
+### 1. **Install Dependencies**
+
+First, install the required dependencies:
+
+```bash
+npm install
 ```
 
-2. Configure environment variables (create `.env` file):
-```
+### 2. **Configure Environment Variables**
+
+Next, set up the environment variables by creating a `.env` file. You can copy the example configuration:
+
+```bash
 cp .env.example .env
 ```
 
-3. Run the application:
+### 3. **Run the Application**
+
+Now, you're ready to run the application in development mode:
+
 ```bash
 npm run start:dev
 ```
+
+This will start the application and you should be able to access it at the specified local URL.
+
+---
 
 
 ## Architecture
@@ -489,9 +548,6 @@ export class UserController {
 - **Protected Routes**: Use `@UseGuards(JwtAuthGuard)` for routes that require authentication.
 - **Role-based Routes**: Use `@UseGuards(JwtAuthGuard, RolesGuard)` and `@Roles('role')` to restrict access to specific roles.
 
-Here's the enhanced README.md file with detailed information about the implementation decisions and potential improvements:
-
-
 
 ## Implementation Notes
 
@@ -530,4 +586,7 @@ private seedData() {
 1. **Data Persistence:**
    - In-memory storage only (data lost on server restart)
    - No proper database integration
+
+
+
 
